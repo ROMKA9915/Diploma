@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Дипломная работа</string>
+    <string name="fetching_error">Ошибка при получении данных, обновите страницу</string>
+    <string name="currencies">Валюты</string>
+</resources>
