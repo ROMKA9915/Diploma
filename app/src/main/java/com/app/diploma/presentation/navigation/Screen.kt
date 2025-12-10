@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 
 abstract class Screen {
 
+    abstract val viewModel: BaseViewModel
+
     @Composable
     abstract fun Content()
 

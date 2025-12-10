@@ -8,6 +8,8 @@ interface Navigator {
 
     fun navigate(screen: Screen)
 
+    fun replace(screen: Screen)
+
     fun pop(onPopLastScreen: () -> Unit = {})
 
 }
