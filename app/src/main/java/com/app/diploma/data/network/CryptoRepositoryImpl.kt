@@ -1,7 +1,5 @@
 package com.app.diploma.data.network
 
-import android.util.Log
-import com.app.diploma.data.dto.Currency
 import com.app.diploma.domain.CryptoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,9 +11,5 @@ class CryptoRepositoryImpl @Inject constructor(
 
     override suspend fun getAllCurrencies() = runCatching {
         cryptoService.getCurrencies().data
-    }
-
-    override suspend fun getRateByCurrency(currency: Currency) = runCatching {
-        cryptoService.getPrice(currency.symbol).data.firstOrNull()!!
     }
 }

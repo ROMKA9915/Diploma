@@ -61,15 +61,21 @@ object DiplomaStaticModule {
     @Singleton
     @Provides
     fun provideCryptoService(json: Json): CryptoService {
-        val client = OkHttpClient.Builder().addInterceptor {
-                val request = it.request().newBuilder()
-                    .addHeader("Authorization", "Bearer ${BuildConfig.API_KEY}").build()
+        val client = OkHttpClient.Builder()
+            .addInterceptor {
+            val request = it.request()
+                .newBuilder()
+                .addHeader("Authorization", "Bearer ${BuildConfig.API_KEY}")
+                .build()
 
-                it.proceed(request)
-            }.build()
+            it.proceed(request)
+        }.build()
 
-        val retrofit = Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(client)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType())).build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(client)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .build()
 
         return retrofit.create<CryptoService>()
     }

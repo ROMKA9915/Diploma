@@ -6,6 +6,4 @@ interface CryptoRepository {
 
     suspend fun getAllCurrencies(): Result<List<Currency>>
 
-    suspend fun getRateByCurrency(currency: Currency): Result<Double>
-
 }
