@@ -1,7 +1,6 @@
 package com.app.diploma.presentation.screens.main
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
@@ -118,14 +117,21 @@ class MainScreen() : Screen() {
                 }
 
                 currenciesState.isFailure -> {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(R.string.fetching_error),
-                        color = colors.onBackground,
-                        fontSize = 28.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(R.string.fetching_error),
+                            color = colors.onBackground,
+                            fontSize = 28.sp,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 }
 
                 currenciesState.isSuccess -> {
