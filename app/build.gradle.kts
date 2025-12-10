@@ -74,4 +74,6 @@ dependencies {
     implementation(libs.retorfit.serialization.converter)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockito)
+    testImplementation(libs.mockito.kotlin)
 }
