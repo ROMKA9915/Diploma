@@ -24,17 +24,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.app.diploma.App
 import com.app.diploma.R
 import com.app.diploma.presentation.navigation.Screen
 import com.app.diploma.presentation.theme.LocalColors
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 
 class MainScreen() : Screen() {
+
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface MainScreenEntryPoint {
+
+        fun mainViewModel(): MainScreenViewModel
+    }
+
+    override val viewModel = EntryPointAccessors.fromApplication(
+        App.instance,
+        MainScreenEntryPoint::class.java,
+    ).mainViewModel()
 
     @Composable
     override fun TopBar() {
         val colors = LocalColors.current
-        val viewModel = viewModel<MainScreenViewModel>()
 
         Row(
             modifier = Modifier
@@ -58,7 +73,7 @@ class MainScreen() : Screen() {
                     .clickable(onClick = viewModel::onSettingsClick),
                 imageVector = ImageVector.vectorResource(R.drawable.settings),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = colors.onBackground,
             )
         }
     }
@@ -66,7 +81,6 @@ class MainScreen() : Screen() {
     @Composable
     override fun Content() {
         val colors = LocalColors.current
-        val viewModel = viewModel<MainScreenViewModel>()
 
         val currenciesState = viewModel.currenciesState.collectAsStateWithLifecycle().value
 
@@ -97,7 +111,7 @@ class MainScreen() : Screen() {
                             .fillMaxWidth(0.3f)
                             .aspectRatio(1f),
                         color = colors.accent,
-                        trackColor = colors.primary,
+                        trackColor = Color.Transparent,
                         strokeWidth = 16.dp,
                         strokeCap = StrokeCap.Round,
                     )
