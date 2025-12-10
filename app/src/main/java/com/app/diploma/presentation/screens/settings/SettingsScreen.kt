@@ -4,10 +4,11 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -218,6 +219,57 @@ class SettingsScreen : Screen() {
                             },
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight(fontWeight.roundToInt()),
+                        )
+                    }
+                }
+            }
+            val selectedCurrencies = viewModel.selectedCurrencyIds
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                stickyHeader {
+                    Text(
+                        text = stringResource(R.string.select_filters),
+                        color = colors.onBackground,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+                items(
+                    items = viewModel.allCurrencyIds.toList(),
+                ) { id ->
+                    val isSelected = id in selectedCurrencies
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(if (isSelected) colors.accent else colors.primary)
+                            .clickable {
+                                viewModel.onCurrencyIdClick(id)
+                            }
+                            .padding(vertical = 8.dp)
+                            .padding(start = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = id,
+                            color = if (isSelected) colors.onAccent else colors.onPrimary,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                        )
+                        Checkbox(
+                            checked = isSelected,
+                            onCheckedChange = {
+                                viewModel.onCurrencyIdClick(id)
+                            },
                         )
                     }
                 }

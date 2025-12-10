@@ -1,18 +1,22 @@
 package com.app.diploma.presentation.screens.main
 
+import android.content.SharedPreferences
 import androidx.compose.runtime.*
+import androidx.core.content.edit
 import com.app.diploma.data.dto.Currency
 import com.app.diploma.domain.CryptoRepository
 import com.app.diploma.presentation.navigation.BaseViewModel
 import com.app.diploma.presentation.navigation.Navigator
 import com.app.diploma.presentation.screens.detail.DetailScreen
 import com.app.diploma.presentation.screens.settings.SettingsScreen
+import com.app.diploma.presentation.screens.settings.SettingsViewModel.Companion.CURRENCY_IDS_KEY
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainScreenViewModel @Inject constructor(
+    private val prefs: SharedPreferences,
     private val navigator: Navigator,
     private val cryptoRepository: CryptoRepository,
 ) : BaseViewModel() {
@@ -25,7 +29,19 @@ class MainScreenViewModel @Inject constructor(
 
     init {
         scope.launch {
-            _currenciesState.value = cryptoRepository.getAllCurrencies()
+            val currencies = cryptoRepository.getAllCurrencies()
+            currencies.onSuccess {
+                // записываем все валюты только при первом запуске
+                val oldValue = prefs.getString(CURRENCY_IDS_KEY, "") ?: ""
+                val contains = prefs.contains(CURRENCY_IDS_KEY)
+
+                if (contains.not() || oldValue.isEmpty()) {
+                    prefs.edit(true) {
+                        putString(CURRENCY_IDS_KEY, it.take(20).map { it.id }.joinToString(","))
+                    }
+                }
+            }
+            _currenciesState.value = currencies
         }
     }
 

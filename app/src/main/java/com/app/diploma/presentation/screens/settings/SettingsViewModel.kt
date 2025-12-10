@@ -1,5 +1,8 @@
 package com.app.diploma.presentation.screens.settings
 
+import android.content.SharedPreferences
+import androidx.compose.runtime.snapshots.SnapshotStateSet
+import androidx.core.content.edit
 import com.app.diploma.data.local.AppSettings
 import com.app.diploma.data.local.Locale
 import com.app.diploma.presentation.navigation.BaseViewModel
@@ -9,6 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
+    private val prefs: SharedPreferences,
     private val navigator: Navigator,
     private val appSettings: AppSettings,
 ) : BaseViewModel() {
@@ -16,8 +20,30 @@ class SettingsViewModel @Inject constructor(
     val themeScheme = appSettings.currentTheme
     val locale = appSettings.currentLocale
 
+    val allCurrencyIds = (prefs.getString(CURRENCY_IDS_KEY, "") ?: "").split(",")
+
+    val selectedCurrencyIds = SnapshotStateSet<String>().also {
+        it.addAll(allCurrencyIds)
+    }
+
     fun onBackPressed() {
         navigator.pop()
+    }
+
+    fun onCurrencyIdClick(currencyId: String) {
+        val isAdded = selectedCurrencyIds.add(currencyId)
+
+        prefs.edit(true) {
+            val oldValue = prefs.getString(CURRENCY_IDS_KEY, "") ?: ""
+            val oldValueFinal = oldValue.split(",").toMutableSet()
+            if (isAdded) {
+                oldValueFinal.add(currencyId)
+            } else {
+                oldValueFinal.remove(currencyId)
+                selectedCurrencyIds.remove(currencyId)
+            }
+            putString(CURRENCY_IDS_KEY, oldValueFinal.joinToString(","))
+        }
     }
 
     fun onThemeSelected(themeScheme: ThemeScheme) {
@@ -30,5 +56,10 @@ class SettingsViewModel @Inject constructor(
         scope.launch {
             appSettings.setLocale(locale)
         }
+    }
+
+    companion object {
+
+        const val CURRENCY_IDS_KEY = "currency_ids_key"
     }
 }
