@@ -12,6 +12,10 @@
 .idea
 .idea/
 /.idea
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+/.idea/gradle.xml
+/.idea/misc.xml
 */.idea
 */.kotlin
 .DS_Store
