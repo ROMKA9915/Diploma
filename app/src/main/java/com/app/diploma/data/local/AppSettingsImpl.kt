@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.app.diploma.presentation.theme.ThemeScheme
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class AppSettingsImpl @Inject constructor(
     private val prefs: SharedPreferences,
-) : AppSettings, SharedPreferences.OnSharedPreferenceChangeListener {
+) : AppSettings {
 
     private val _currentTheme = run {
         val theme = ThemeScheme.retrieveByName(
@@ -37,28 +38,27 @@ class AppSettingsImpl @Inject constructor(
             Locale.retrieveByName(savedLocale)
         } ?: Locale.Ru
 
+        runBlocking {
+            changeLocale(locale)
+        }
+
         MutableStateFlow(locale)
     }
     override val currentLocale: StateFlow<Locale> = _currentLocale.asStateFlow()
 
-    override fun setTheme(theme: ThemeScheme) {
+    override suspend fun setTheme(theme: ThemeScheme) {
         _currentTheme.value = theme
     }
 
-    override fun setLocale(locale: Locale) {
-        val localeList = LocaleListCompat.forLanguageTags(locale.tag)
-        AppCompatDelegate.setApplicationLocales(localeList)
+    override suspend fun setLocale(locale: Locale) {
+        changeLocale(locale)
         _currentLocale.value = locale
     }
 
-    override fun onSharedPreferenceChanged(
-        sharedPreferences: SharedPreferences?,
-        key: String?,
-    ) {
-        if (key == THEME_SCHEME_KEY) {
-            val newValue = sharedPreferences?.getString(THEME_SCHEME_KEY, ThemeScheme.DEFAULT.name)
-                ?: ThemeScheme.DEFAULT.name
-            _currentTheme.value = ThemeScheme.retrieveByName(newValue)
+    private suspend fun changeLocale(locale: Locale) {
+        withContext(Dispatchers.Main.immediate) {
+            val localeList = LocaleListCompat.forLanguageTags(locale.tag)
+            AppCompatDelegate.setApplicationLocales(localeList)
         }
     }
 
