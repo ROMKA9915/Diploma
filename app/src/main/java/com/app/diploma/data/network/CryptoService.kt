@@ -11,7 +11,7 @@ interface CryptoService {
     suspend fun getCurrencies(): ApiResponse<Currency>
 
     @GET("v3/price/bysymbol/{symbol}")
-    suspend fun getPrice(@Path("symbol") symbol: String): ApiResponse<Long>
+    suspend fun getPrice(@Path("symbol") symbol: String): ApiResponse<Double>
 
 }
 

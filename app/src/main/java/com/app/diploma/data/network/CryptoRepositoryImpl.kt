@@ -13,8 +13,6 @@ class CryptoRepositoryImpl @Inject constructor(
 
     override suspend fun getAllCurrencies() = runCatching {
         cryptoService.getCurrencies().data
-    }.onFailure {
-        Log.d("TAG228", "$it")
     }
 
     override suspend fun getRateByCurrency(currency: Currency) = runCatching {
