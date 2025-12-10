@@ -1,7 +1,9 @@
 package com.app.diploma
 
+import android.content.SharedPreferences
 import com.app.diploma.data.dto.Currency
 import com.app.diploma.data.network.*
+import com.app.diploma.presentation.screens.settings.SettingsViewModel
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.kotlin.doReturn
@@ -17,23 +19,29 @@ class ExampleUnitTest {
                     id = "test_1",
                     symbol = "t_1",
                     currencySymbol = "TEST_1",
+                    rateUsd = "1",
                 ),
                 Currency(
                     id = "test_2",
                     symbol = "t_2",
                     currencySymbol = "TEST_2",
+                    rateUsd = "2",
                 ),
                 Currency(
                     id = "test_3",
                     symbol = "t_3",
                     currencySymbol = "TEST_3",
+                    rateUsd = "3",
                 ),
             )
         )
         val mockService = mock<CryptoService> {
-            onBlocking { getCurrencies() } doReturn correctResponse
+            onBlocking { getCurrencies("") } doReturn correctResponse
         }
-        val repo = CryptoRepositoryImpl(mockService)
+        val mockPrefs = mock<SharedPreferences> {
+            on { getString(SettingsViewModel.CURRENCY_IDS_KEY, "") } doReturn ""
+        }
+        val repo = CryptoRepositoryImpl(mockPrefs, mockService)
 
         val actualResponse = runBlocking {
             repo.getAllCurrencies()
