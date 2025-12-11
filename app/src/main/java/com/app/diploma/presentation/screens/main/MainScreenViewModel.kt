@@ -37,7 +37,7 @@ class MainScreenViewModel @Inject constructor(
 
                 if (contains.not() || oldValue.isEmpty()) {
                     prefs.edit(true) {
-                        putString(CURRENCY_IDS_KEY, it.take(20).map { it.id }.joinToString(","))
+                        putString(CURRENCY_IDS_KEY, it.map { it.id }.joinToString(","))
                     }
                 }
             }
