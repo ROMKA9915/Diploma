@@ -125,7 +125,7 @@ class DetailScreen(
                         .size(40.dp)
                         .clip(CircleShape)
                         .clickable(
-                            enabled = quantity > 2,
+                            enabled = quantity > 0,
                             onClick = viewModel::onDecreaseQuantity,
                         ),
                     imageVector = ImageVector.vectorResource(R.drawable.minus),
