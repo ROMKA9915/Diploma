@@ -9,15 +9,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,8 +28,7 @@ import com.app.diploma.App
 import com.app.diploma.R
 import com.app.diploma.data.local.Locale
 import com.app.diploma.presentation.navigation.Screen
-import com.app.diploma.presentation.theme.LocalColors
-import com.app.diploma.presentation.theme.ThemeScheme
+import com.app.diploma.presentation.theme.*
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -86,6 +86,7 @@ class SettingsScreen : Screen() {
 
         val themeScheme by viewModel.themeScheme.collectAsStateWithLifecycle()
         val locale by viewModel.locale.collectAsStateWithLifecycle()
+        val context = LocalContext.current
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -221,6 +222,39 @@ class SettingsScreen : Screen() {
                             fontWeight = FontWeight(fontWeight.roundToInt()),
                         )
                     }
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                viewModel.profileData?.let {
+                    val text = remember(LocalLocale.current) {
+                        buildAnnotatedString {
+                            append(context.getString(R.string.account_verified))
+                            val style = TextStyle(
+                                fontSize = 26.sp,
+                            )
+                            append(" ")
+                            withStyle(style.toSpanStyle()) {
+                                if (it.emailVerified) {
+                                    append(context.getString(R.string.yes))
+                                } else {
+                                    append(context.getString(R.string.no))
+                                }
+                            }
+                        }
+                    }
+                    Text(
+                        text = text,
+                        color = colors.onBackground,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
             val selectedCurrencies = viewModel.selectedCurrencyIds

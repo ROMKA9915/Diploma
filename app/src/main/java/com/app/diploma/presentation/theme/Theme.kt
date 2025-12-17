@@ -28,6 +28,7 @@ fun DiplomaTheme(
     val colors = if (isDarkTheme) DiplomaColorsDark else DiplomaColorsLight
 
     CompositionLocalProvider(
+        LocalLocale provides locale,
         LocalColors provides colors,
         LocalContext provides newContext,
         LocalResources provides newContext.resources,
@@ -42,6 +43,7 @@ private fun Context.withLocale(locale: Locale): Context {
 }
 
 val LocalColors = staticCompositionLocalOf<DiplomaColors> { error("No colors provided") }
+val LocalLocale = staticCompositionLocalOf<Locale> { error("No colors provided") }
 
 enum class ThemeScheme(
     @StringRes private val titleRes: Int,

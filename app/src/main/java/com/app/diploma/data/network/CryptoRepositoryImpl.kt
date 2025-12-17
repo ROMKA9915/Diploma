@@ -16,4 +16,8 @@ class CryptoRepositoryImpl @Inject constructor(
         val filteredIds = prefs.getString(CURRENCY_IDS_KEY, "") ?: ""
         cryptoService.getCurrencies(filteredIds).data
     }
+
+    override suspend fun getProfileData() = runCatching {
+        cryptoService.getAccountData().data
+    }
 }

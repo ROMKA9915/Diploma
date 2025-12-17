@@ -1,10 +1,13 @@
 package com.app.diploma.presentation.screens.settings
 
 import android.content.SharedPreferences
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateSet
 import androidx.core.content.edit
+import com.app.diploma.data.dto.Profile
 import com.app.diploma.data.local.AppSettings
 import com.app.diploma.data.local.Locale
+import com.app.diploma.domain.CryptoRepository
 import com.app.diploma.presentation.navigation.BaseViewModel
 import com.app.diploma.presentation.navigation.Navigator
 import com.app.diploma.presentation.theme.ThemeScheme
@@ -15,6 +18,7 @@ class SettingsViewModel @Inject constructor(
     private val prefs: SharedPreferences,
     private val navigator: Navigator,
     private val appSettings: AppSettings,
+    private val cryptoRepository: CryptoRepository,
 ) : BaseViewModel() {
 
     val themeScheme = appSettings.currentTheme
@@ -24,6 +28,14 @@ class SettingsViewModel @Inject constructor(
 
     val selectedCurrencyIds = SnapshotStateSet<String>().also {
         it.addAll(allCurrencyIds)
+    }
+
+    var profileData by mutableStateOf<Profile?>(null)
+
+    init {
+        scope.launch {
+            profileData = cryptoRepository.getProfileData().getOrNull()
+        }
     }
 
     fun onBackPressed() {

@@ -10,9 +10,9 @@ import com.app.diploma.presentation.navigation.Navigator
 import com.app.diploma.presentation.screens.detail.DetailScreen
 import com.app.diploma.presentation.screens.settings.SettingsScreen
 import com.app.diploma.presentation.screens.settings.SettingsViewModel.Companion.CURRENCY_IDS_KEY
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainScreenViewModel @Inject constructor(
@@ -29,20 +29,27 @@ class MainScreenViewModel @Inject constructor(
 
     init {
         scope.launch {
-            val currencies = cryptoRepository.getAllCurrencies()
-            currencies.onSuccess {
-                // записываем все валюты только при первом запуске
-                val oldValue = prefs.getString(CURRENCY_IDS_KEY, "") ?: ""
-                val contains = prefs.contains(CURRENCY_IDS_KEY)
+            while (isActive) {
+                requestRates()
+                delay(5000)
+            }
+        }
+    }
 
-                if (contains.not() || oldValue.isEmpty()) {
-                    prefs.edit(true) {
-                        putString(CURRENCY_IDS_KEY, it.map { it.id }.joinToString(","))
-                    }
+    private suspend fun requestRates() {
+        val currencies = cryptoRepository.getAllCurrencies()
+        currencies.onSuccess {
+            // записываем все валюты только при первом запуске
+            val oldValue = prefs.getString(CURRENCY_IDS_KEY, "") ?: ""
+            val contains = prefs.contains(CURRENCY_IDS_KEY)
+
+            if (contains.not() || oldValue.isEmpty()) {
+                prefs.edit(true) {
+                    putString(CURRENCY_IDS_KEY, it.map { it.id }.joinToString(","))
                 }
             }
-            _currenciesState.value = currencies
         }
+        _currenciesState.value = currencies
     }
 
     fun refresh() {

@@ -10,6 +10,9 @@
     <string name="system">Системная</string>
     <string name="locale">Язык приложения</string>
     <string name="russian">Русский</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="account_verified">Аккаунт верифицирован:</string>
     <string name="english">Английский</string>
     <string name="select_filters">Выберите только нужные валюты</string>
 </resources>

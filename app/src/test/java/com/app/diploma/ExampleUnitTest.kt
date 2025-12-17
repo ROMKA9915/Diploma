@@ -13,7 +13,7 @@ class ExampleUnitTest {
 
     @Test
     fun `currency repository returns returns correct list`() {
-        val correctResponse = ApiResponse(
+        val correctResponse = ApiListResponse(
             data = listOf(
                 Currency(
                     id = "test_1",
